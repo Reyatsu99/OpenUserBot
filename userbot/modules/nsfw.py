@@ -6,7 +6,6 @@ import os
 import urllib
 from urllib.request import urlopen
 import requests
-from bs4 import BeautifulSoup
 import re
 from telethon.tl.types import MessageMediaPhoto
 from PIL import Image
