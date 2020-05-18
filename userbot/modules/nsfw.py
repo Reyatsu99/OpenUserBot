@@ -1,3 +1,4 @@
+# Credits to https://t.me/TheHardGamer
 import datetime
 from telethon import events
 import io
