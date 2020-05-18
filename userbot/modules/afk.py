@@ -4,6 +4,7 @@
 # Licensed under the Raphielscape Public License, Version 1.d (the "License");
 # you may not use this file except in compliance with the License.
 # All Credits to https://t.me/azrim89 for timestamp.
+# Offline / Online Credits to https://t.me/Devp73.
 
 """ Userbot module which contains afk-related commands """
 
@@ -15,8 +16,10 @@ from platform import python_version, uname
 
 from telethon.events import StopPropagation
 
+from telethon.tl.functions.account import UpdateProfileRequest
+
 from userbot import (AFKREASON, COUNT_MSG, CMD_HELP, ISAFK, BOTLOG,
-                     BOTLOG_CHATID, USERS, PM_AUTO_BAN, ALIVE_NAME)
+                     BOTLOG_CHATID, USERS, bot, PM_AUTO_BAN, ALIVE_NAME)
 from userbot.events import register
 
 # ========================= CONSTANTS ============================
@@ -70,6 +73,7 @@ async def set_afk(afk_e):
     global afk_start
     global afk_end
     global reason
+    user = await bot.get_me()
     USER_AFK = {}
     afk_time = None
     afk_end = {}
@@ -80,6 +84,11 @@ async def set_afk(afk_e):
         await afk_e.edit("**Going AFK!**")
     else:
         await afk_e.edit("**Going AFK!**")
+    if user.last_name:
+        await afk_e.client(UpdateProfileRequest(first_name=user.first_name, last_name=user.last_name + " [ OFFLINE ]"))
+    else:
+        await afk_e.client(UpdateProfileRequest(first_name=user.first_name, last_name=" [ OFFLINE ]"))
+
     if BOTLOG:
         await afk_e.client.send_message(BOTLOG_CHATID, "#AFK\nYou went AFK!")
     ISAFK = True
@@ -98,6 +107,12 @@ async def type_afk_is_not_true(notafk):
     global afk_time  # pylint:disable=E0602
     global afk_start
     global afk_end
+    user = await bot.get_me()
+    last = user.last_name
+    if last and last.endswith(" [ OFFLINE ]"):
+        last1 = last[:-12]
+    else:
+        last1 = ""
     back_alive = datetime.now()
     afk_end = back_alive.replace(microsecond=0)
     if ISAFK:
@@ -105,6 +120,7 @@ async def type_afk_is_not_true(notafk):
         msg = await notafk.edit("**I'm back !**")
         time.sleep(3)
         await msg.delete()
+        await notafk.client(UpdateProfileRequest(first_name=user.first_name, last_name=last1))
         if BOTLOG:
             await notafk.client.send_message(
                 BOTLOG_CHATID,
@@ -134,6 +150,7 @@ async def mention_afk(mention):
     global afk_time  # pylint:disable=E0602
     global afk_start
     global afk_end
+    user = await bot.get_me()
     back_alivee = datetime.now()
     afk_end = back_alivee.replace(microsecond=0)
     afk_since = "**a while ago**"
@@ -161,26 +178,26 @@ async def mention_afk(mention):
                     wday = now + datetime.timedelta(days=-days)
                     afk_since = wday.strftime('%A')
             elif hours > 1:
-                afk_since = f"`{int(hours)}h {int(minutes)}m` **ago**"
+                afk_since = f"`{int(hours)}h {int(minutes)}m`"
             elif minutes > 0:
-                afk_since = f"`{int(minutes)}m {int(seconds)}s` **ago**"
+                afk_since = f"`{int(minutes)}m {int(seconds)}s`"
             else:
-                afk_since = f"`{int(seconds)}s` **ago**"
+                afk_since = f"`{int(seconds)}s`**"
             if mention.sender_id not in USERS:
                 if AFKREASON:
-                    await mention.reply(f"My boss **{DEFAULTUSER}** is **afk since** {afk_since}.\
-                        \n**Because my boss is** `{AFKREASON}`")
+                    await mention.reply(f"My Master **{DEFAULTUSER}** Is **afk since** {afk_since}.\
+                        \n**Because my King is** `{AFKREASON}`")
                 else:
-                    await mention.reply(f"My boss {DEFAULTUSER} is **afk Since** {afk_since}.\nand My boss has left a word for you only: \n{AFKSK}\n`.` ")
+                    await mention.reply(f"My King 👑 {DEFAULTUSER} 👑 is **afk Since** {afk_since}.\nand My King has left a word for you only: \n{AFKSK}\n`.` ")
                 USERS.update({mention.sender_id: 1})
                 COUNT_MSG = COUNT_MSG + 1
             elif mention.sender_id in USERS:
                 if USERS[mention.sender_id] % randint(2, 4) == 0:
                     if AFKREASON:
-                        await mention.reply(f"My boss **{DEFAULTUSER}** is **afk since** {afk_since}.\
-                            \n**Because my boss is** `{AFKREASON}`")
+                        await mention.reply(f"My Master **{DEFAULTUSER}** Is **afk since** {afk_since}.\
+                            \n**Because my King is** `{AFKREASON}`")
                     else:
-                        await mention.reply(f"My boss {DEFAULTUSER} is **afk Since** {afk_since}.\nand My boss has left a word for you only: \n{AFKSK}\n`.` ")
+                        await mention.reply(f"My King 👑 {DEFAULTUSER} 👑 is **afk Since** {afk_since}.\nand My King has left a word for you only: \n{AFKSK}\n`.` ")
                     USERS[mention.sender_id] = USERS[mention.sender_id] + 1
                     COUNT_MSG = COUNT_MSG + 1
                 else:
@@ -201,6 +218,7 @@ async def afk_on_pm(sender):
     global afk_time  # pylint:disable=E0602
     global afk_start
     global afk_end
+    user = await bot.get_me()
     back_alivee = datetime.now()
     afk_end = back_alivee.replace(microsecond=0)
     afk_since = "**a while ago**"
@@ -237,26 +255,26 @@ async def afk_on_pm(sender):
                     wday = now + datetime.timedelta(days=-days)
                     afk_since = wday.strftime('%A')
             elif hours > 1:
-                afk_since = f"`{int(hours)}h {int(minutes)}m` **ago**"
+                afk_since = f"`{int(hours)}h {int(minutes)}m`"
             elif minutes > 0:
-                afk_since = f"`{int(minutes)}m {int(seconds)}s` **ago**"
+                afk_since = f"`{int(minutes)}m {int(seconds)}s`"
             else:
-                afk_since = f"`{int(seconds)}s` **ago**"
+                afk_since = f"`{int(seconds)}s`"
             if sender.sender_id not in USERS:
                 if AFKREASON:
-                    await sender.reply(f"My boss **{DEFAULTUSER}** is **afk since** {afk_since}.\
-                        \n**Because my boss is** `{AFKREASON}`")
+                    await sender.reply(f"My Master **{DEFAULTUSER}** Is **afk since** {afk_since}.\
+                        \n**Because my King is** `{AFKREASON}`")
                 else:
-                    await sender.replyf(f"My boss {DEFAULTUSER} is **afk Since** {afk_since}.\nand My boss has left a word for you only: \n{AFKSK}\n`.` ")
+                    await sender.replyf(f"My King 👑 {DEFAULTUSER} 👑 is **afk Since** {afk_since}.\nand My King has left a word for you only: \n{AFKSK}\n`.` ")
                 USERS.update({sender.sender_id: 1})
                 COUNT_MSG = COUNT_MSG + 1
             elif apprv and sender.sender_id in USERS:
                 if USERS[sender.sender_id] % randint(2, 4) == 0:
                     if AFKREASON:
-                        await sender.reply(f"My boss **{DEFAULTUSER}** is **afk since** {afk_since}.\
-                            \n**Because my boss is** `{AFKREASON}`")
+                        await sender.reply(f"My Master **{DEFAULTUSER}** Is **afk since** {afk_since}.\
+                            \n**Because my King is** `{AFKREASON}`")
                     else:
-                        await sender.reply(f"My boss {DEFAULTUSER} is **afk Since** {afk_since}.\nand My boss has left a word for you only: \n{AFKSK}\n`.` ")
+                        await sender.reply(f"My King 👑 {DEFAULTUSER} 👑 is **afk Since** {afk_since}.\nand My King has left a word for you only: \n{AFKSK}\n`.` ")
                     USERS[sender.sender_id] = USERS[sender.sender_id] + 1
                     COUNT_MSG = COUNT_MSG + 1
                 else:
