@@ -1,9 +1,12 @@
+wheel
 aiohttp
 aria2p
 async_generator
+asyncurban
 cowpy
 TgCrypto>=1.2.0
 cffi>=1.0.0
+wget 
 dnspython
 emoji
 gitpython
@@ -11,17 +14,14 @@ google-api-python-client>=1.8.0
 google-auth-oauthlib
 googletrans>=2.4.0
 google_images_download>=2.7.1
+git+https://github.com/voins/google-images-download.git@2cd68173c961324a2c41c61e8b6f40a49663ce60
 gTTS>=2.1.1
 gTTS-token>=1.1.3
 hachoir>=3.0a5
 REPO_LINK
 heroku3>=3.4.0
-<<<<<<< HEAD
-httplib2==0.15.0
-=======
 httplib2>=0.18.0
 psutil
->>>>>>> c8123a9... Update requirements.txt
 humanize
 lxml
 oauth2client
@@ -50,6 +50,8 @@ redis>=3.3.10
 beautifulsoup4>=4.8.1
 youtube-dl>=2019.9.28
 PyGithub
+PyDrive2
+pyDownload
 bs4
 covid
 base
@@ -57,10 +59,10 @@ pip>=19.2.3
 selenium>=3.141.0
 git+https://github.com/LonamiWebs/Telethon
 git+https://github.com/ahupp/python-magic
-pytube3
+pytube>=9.5.1
 telegraph
 python-dateutil
 pyfiglet   
 jotquote
 csvfaker
-pymongo
+pymongo[srv]
