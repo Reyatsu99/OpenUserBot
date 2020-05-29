@@ -21,7 +21,7 @@ async def boobs(e):
     urllib.request.urlretrieve(
         "http://media.oboobs.ru/{}".format(nsfw), "*.jpg")
     os.rename('*.jpg', 'k.jpg')
-    await bot.send_file(e.chat_id, "k.jpg")
+    await e.client.send_file(e.chat_id, "k.jpg")
 
 
 @register(outgoing=True, pattern="^.butts(?: |$)(.*)")
@@ -30,7 +30,7 @@ async def butts(e):
     urllib.request.urlretrieve(
         "http://media.obutts.ru/{}".format(nsfw), "*.jpg")
     os.rename('*.jpg', 'k.jpg')
-    await bot.send_file(e.chat_id, "k.jpg")
+    await e.client.send_file(e.chat_id, "k.jpg")
 
 
 CMD_HELP.update({"boobs": ".boobs\
