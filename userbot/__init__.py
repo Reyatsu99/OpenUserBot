@@ -3,6 +3,7 @@
 # Licensed under the Raphielscape Public License, Version 1.c (the "License");
 # you may not use this file except in compliance with the License.
 #
+# thanks to penn5 for bug fixing
 """ Userbot initialization. """
 
 import os
@@ -10,7 +11,8 @@ import os
 from sys import version_info
 from logging import basicConfig, getLogger, INFO, DEBUG
 from distutils.util import strtobool as sb
-
+from pymongo import MongoClient
+from redis import StrictRedis
 from pylast import LastFMNetwork, md5
 from pySmartDL import SmartDL
 from dotenv import load_dotenv
@@ -54,12 +56,11 @@ API_KEY = os.environ.get("API_KEY", None)
 API_HASH = os.environ.get("API_HASH", None)
 
 # Photo Chat - Get this value from http://antiddos.systems
-API_TOKEN = os.environ.get("API_TOKEN", "15e05de0-0357-4553-b39c-d614443ed91e")
+API_TOKEN = os.environ.get("API_TOKEN", None)
 API_URL = os.environ.get("API_URL", "http://antiddos.systems")    
     
 # Userbot Session String
 STRING_SESSION = os.environ.get("STRING_SESSION", None)
-
 # Logging channel/group ID configuration.
 BOTLOG_CHATID = int(os.environ.get("BOTLOG_CHATID", None))
 
@@ -82,13 +83,16 @@ GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", None)
 # Custom (forked) repo URL for updater.
 UPSTREAM_REPO_URL = os.environ.get(
     "UPSTREAM_REPO_URL",
-    "https://github.com/Reyatsu99/OpenUserBot.git")
+    "https://github.com/mkaraniya/OpenUserBot.git")
 
 # Console verbose logging
 CONSOLE_LOGGER_VERBOSE = sb(os.environ.get("CONSOLE_LOGGER_VERBOSE", "False"))
 
 # SQL Database URI
 DB_URI = os.environ.get("DATABASE_URL", None)
+
+# For MONGO based DataBase
+MONGO_URI = os.environ.get("MONGO_URI", None)
 
 # OCR API key
 OCR_SPACE_API_KEY = os.environ.get("OCR_SPACE_API_KEY", None)
@@ -127,6 +131,8 @@ ALIVE_NAME = os.environ.get("ALIVE_NAME", None)
 COUNTRY = str(os.environ.get("COUNTRY", ""))
 TZ_NUMBER = int(os.environ.get("TZ_NUMBER", 1))
 
+TERM_ALIAS = os.environ.get("TERM_ALIAS", "OUB")
+
 # Clean Welcome
 CLEAN_WELCOME = sb(os.environ.get("CLEAN_WELCOME", "True"))
 
@@ -152,6 +158,7 @@ G_DRIVE_CLIENT_ID = os.environ.get("G_DRIVE_CLIENT_ID", None)
 G_DRIVE_CLIENT_SECRET = os.environ.get("G_DRIVE_CLIENT_SECRET", None)
 G_DRIVE_AUTH_TOKEN_DATA = os.environ.get("G_DRIVE_AUTH_TOKEN_DATA", None)
 GDRIVE_FOLDER_ID = os.environ.get("GDRIVE_FOLDER_ID", None)
+GDRIVE_FOLDER = os.environ.get("GDRIVE_FOLDER", None)
 TEMP_DOWNLOAD_DIRECTORY = os.environ.get("TMP_DOWNLOAD_DIRECTORY",
                                          "./downloads")
 
@@ -160,6 +167,32 @@ GENIUS_API_TOKEN = os.environ.get("GENIUS", None)
 # Genius lyrics get this value from https://genius.com/developers both has same values
 GENIUS = os.environ.get("GENIUS_API_TOKEN", None)
 
+
+# Init Mongo
+MONGOCLIENT = MongoClient(MONGO_URI, 27017, serverSelectionTimeoutMS=1)
+MONGO = MONGOCLIENT.userbot
+
+
+def is_mongo_alive():
+    try:
+        MONGOCLIENT.server_info()
+    except BaseException:
+        return False
+    return True
+
+
+# Init Redis
+# Redis will be hosted inside the docker container that hosts the bot
+# We need redis for just caching, so we just leave it to non-persistent
+REDIS = StrictRedis(host='localhost', port=6379, db=0)
+
+
+def is_redis_alive():
+    try:
+        REDIS.ping()
+        return True
+    except BaseException:
+        return False
 
 
 # Setting Up CloudMail.ru and MEGA.nz extractor binaries,
@@ -226,6 +259,7 @@ COUNT_MSG = 0
 USERS = {}
 COUNT_PM = {}
 LASTMSG = {}
+ENABLE_KILLME = True
 CMD_HELP = {}
 ISAFK = False
 AFKREASON = None
