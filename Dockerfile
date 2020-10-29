@@ -20,7 +20,6 @@ RUN apk add --no-cache=true --update \
     g++ \
     git \
     sudo \
-    aria2 \
     util-linux \
     libevent \
     jpeg-dev \
@@ -48,6 +47,7 @@ RUN apk add --no-cache=true --update \
     readline-dev \
     sqlite \
     ffmpeg \
+    w3m \
     libjpeg-turbo-dev \
     sqlite-dev \
     libc-dev \
@@ -74,10 +74,11 @@ RUN python3 -m ensurepip \
 # Clone repo and prepare working directory
 #
 
-RUN git clone -b sql-extended https://github.com/Reyatsu99/OpenUserBot /root/userbot
+RUN git clone -b sql-extended https://github.com/mkaraniya/OpenUserBot /root/userbot
 RUN mkdir /root/userbot/.bin
 WORKDIR /root/userbot/
-
+ENV PATH="/root/userbot/.bin:$PATH"
+WORKDIR /root/userbot/
 #
 # Copies session and config (if it exists)
 #
